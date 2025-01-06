@@ -66,14 +66,29 @@ const GameController = (function() {
             return !isSpotEmpty(firstSpot) && row.every(spot => spot === firstSpot);
         }
 
-        function checkColumnForWin(columnStartIndex) {}
+        function checkColumnForWin(columnStartIndex) {
+            // create a new array for each column the populate that array with the index 3 spaces away from it?
+            const column = [board[columnStartIndex], board[columnStartIndex + 3], board[columnStartIndex + 6]]
+            const firstSpot = column[0]
+
+            return !isSpotEmpty(firstSpot) && column.every(spot => spot === firstSpot);
+        }
+
         function checkDiagonalForWin(StartIndex) {}
 
+        // Check for wins in rows
         for (let rowIndex = 0; rowIndex < 3; rowIndex++) {
             if (checkRowForWin(rowIndex * 3)) {
                 return true;
             }
             
+        }
+
+        // Check for wins in columns
+        for (let columnIndex = 0; columnIndex < 3; columnIndex++) {
+            if (checkColumnForWin(columnIndex)) {
+                return true;
+            }
         }
 
         return false;
