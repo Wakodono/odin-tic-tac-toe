@@ -1,3 +1,13 @@
+function createPlayer(isTurn, marker) {
+    return {
+      isTurn,
+      marker,
+      toggleTurn: function() {
+        this.isTurn = !this.isTurn;
+      }
+    };
+}
+
 const Gameboard = (function() {
     let board = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
 
@@ -7,12 +17,11 @@ const Gameboard = (function() {
             // put isSpotAvailable here?
             if (isSpotAvailable(index)) {
                 // Place marker in this spot
+                board[index] = marker;
             }
+            return 1;
         }
-
-        // Check if the spot is available (you can use isSpotAvailable for this if it's implemented).
-
-        // If valid && available, place the marker at the specified index
+        return 0
     }
 
     function getBoardState() {
@@ -31,4 +40,64 @@ const Gameboard = (function() {
     }
 })();
 
+const GameController = (function() {
+    let players = [];
+    const Gameboard = Gameboard
+  
+    const startGame = function() {
+      players = [
+        createPlayer(true, 'X'),
+        createPlayer(false, 'O')
+      ];
+      // Additional game start logic here
+    };
+  
+    // More game control methods...
+    const checkWinner = function() {
+
+        function isSpotEmpty(spot) {
+            return spot !== ' ';
+        }
+
+        function checkRowForWin(rowStartIndex) {
+            const row = board.slice(rowStartIndex, rowStartIndex + 3);
+            const firstSpot = row[0];
+
+            return !isSpotEmpty(firstSpot) && row.every(spot => spot === firstSpot);
+        }
+
+        function checkColumnForWin(columnStartIndex) {}
+        function checkDiagonalForWin(StartIndex) {}
+
+        for (let rowIndex = 0; rowIndex < 3; rowIndex++) {
+            if (checkRowForWin(rowIndex * 3)) {
+                return true;
+            }
+            
+        }
+
+        return false;
+    };
+
+    const playRound = function(index) {
+        let whosTurn = players.find((element) => element.isTurn);
+        let board = Gameboard.getBoardState();
+
+        if (Gameboard.isSpotAvailable(index)) {
+            // placeMarker
+            Gameboard.placeMarker(index, whosTurn.marker);
+            if (checkWinner) {
+                // Game over - handle win or draw
+            } else {
+                // Switch turns
+            }
+        }
+    };
+  
+    return {
+      startGame
+    };
+})();
+
+console.log(Gameboard.placeMarker(0, 'X'));
 console.log(Gameboard.getBoardState());
