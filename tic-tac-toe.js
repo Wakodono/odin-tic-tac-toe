@@ -43,6 +43,31 @@ const Gameboard = (function() {
 const GameController = (function() {
     let players = [];
     const Gameboard = Gameboard
+
+    function isSpotEmpty(spot) {
+        return spot !== ' ';
+    }
+
+    function checkRowForWin(rowStartIndex) {
+        const row = board.slice(rowStartIndex, rowStartIndex + 3);
+        const firstSpot = row[0];
+
+        return !isSpotEmpty(firstSpot) && row.every(spot => spot === firstSpot);
+    }
+
+    function checkColumnForWin(columnStartIndex) {
+        // create a new array for each column the populate that array with the index 3 spaces away from it?
+        const column = [board[columnStartIndex], board[columnStartIndex + 3], board[columnStartIndex + 6]]
+        const firstSpot = column[0]
+
+        return !isSpotEmpty(firstSpot) && column.every(spot => spot === firstSpot);
+    }
+
+    function checkDiagonalForWin(diagonal) {
+        const firstSpot = diagonal[0]
+
+        return !isSpotEmpty(firstSpot) && diagonal.every(spot => spot === firstSpot);
+    }
   
     const startGame = function() {
       players = [
@@ -53,31 +78,11 @@ const GameController = (function() {
     };
   
     // More game control methods...
-    const checkWinner = function() {
+    const checkForWinner = function() {
+        let board = Gameboard.getBoardState();
 
-        function isSpotEmpty(spot) {
-            return spot !== ' ';
-        }
-
-        function checkRowForWin(rowStartIndex) {
-            const row = board.slice(rowStartIndex, rowStartIndex + 3);
-            const firstSpot = row[0];
-
-            return !isSpotEmpty(firstSpot) && row.every(spot => spot === firstSpot);
-        }
-
-        function checkColumnForWin(columnStartIndex) {
-            // create a new array for each column the populate that array with the index 3 spaces away from it?
-            const column = [board[columnStartIndex], board[columnStartIndex + 3], board[columnStartIndex + 6]]
-            const firstSpot = column[0]
-
-            return !isSpotEmpty(firstSpot) && column.every(spot => spot === firstSpot);
-        }
-
-        function checkDiagonalForWin(StartIndex) {}
-
-        // Check for wins in rows
-        for (let rowIndex = 0; rowIndex < 3; rowIndex++) {
+         // Check for wins in rows
+         for (let rowIndex = 0; rowIndex < 3; rowIndex++) {
             if (checkRowForWin(rowIndex * 3)) {
                 return true;
             }
@@ -91,22 +96,24 @@ const GameController = (function() {
             }
         }
 
+        // Check for wins in diagonals
+
+        const topLeftToBottomRight = [board[0], board[4], board[8]];
+        const topRightToBottomLeft = [board[2], board[4], board[6]];
+
+        if (checkDiagonalForWin(topLeftToBottomRight || checkDiagonalForWin(topRightToBottomLeft))) return true;
+
+        // Check for draw conditions
+        if (!board.includes(' ')) return 'Draw';
+
         return false;
     };
 
     const playRound = function(index) {
-        let whosTurn = players.find((element) => element.isTurn);
         let board = Gameboard.getBoardState();
+        let whosTurn = players.find((element) => element.isTurn);
 
-        if (Gameboard.isSpotAvailable(index)) {
-            // placeMarker
-            Gameboard.placeMarker(index, whosTurn.marker);
-            if (checkWinner) {
-                // Game over - handle win or draw
-            } else {
-                // Switch turns
-            }
-        }
+        
     };
   
     return {
