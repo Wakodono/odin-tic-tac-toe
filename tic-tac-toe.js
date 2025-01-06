@@ -48,13 +48,14 @@ const Gameboard = (function() {
 const GameController = (function() {
     let players = [];
     const gameBoard = Gameboard;
-
+    
     function isSpotEmpty(spot) {
-        return spot !== ' ';
+        return spot === ' ';
     }
-
+    
     function checkRowForWin(rowStartIndex) {
-        const row = board.slice(rowStartIndex, rowStartIndex + 3);
+        const boardState = gameBoard.getBoardState();
+        const row = boardState.slice(rowStartIndex, rowStartIndex + 3);
         const firstSpot = row[0];
 
         return !isSpotEmpty(firstSpot) && row.every(spot => spot === firstSpot);
@@ -128,7 +129,8 @@ const GameController = (function() {
             Gameboard.placeMarker(index, whosTurn.marker);
     
             let gameResult = checkForWinner();
-            if (gameResult === true) {
+
+            if (gameResult) {
                 console.log(`${whosTurn.marker} has won the game!`);
                 return 'win'; // You can return a string or boolean to signify game end
             } else if (gameResult === 'draw') {
@@ -151,5 +153,8 @@ const GameController = (function() {
     };
 })();
 
-console.log(Gameboard.getBoardState());
 GameController.startGame();
+console.log(Gameboard.getBoardState());
+GameController.playRound(4);
+console.log(gameResult);
+console.log(Gameboard.getBoardState());
