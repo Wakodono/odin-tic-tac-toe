@@ -24,6 +24,10 @@ const Gameboard = (function() {
         return 0
     }
 
+    function clearBoard() {
+        board.fill(' ');  
+    }
+
     function getBoardState() {
         return board;
     }
@@ -36,7 +40,8 @@ const Gameboard = (function() {
         // methods
         getBoardState,
         placeMarker,
-        isSpotAvailable
+        isSpotAvailable,
+        clearBoard
     }
 })();
 
@@ -75,9 +80,15 @@ const GameController = (function() {
         createPlayer(false, 'O')
       ];
       // Additional game start logic here
+      gameBoard.clearBoard();
+
+      console.log('GAME STARTO')
+
+      const firstPlayer = players.find(player => player.isTurn)
+      console.log(`${firstPlayer.marker} Will go first`)
+
     };
   
-    // More game control methods...
     const checkForWinner = function() {
         let board = Gameboard.getBoardState();
 
@@ -135,8 +146,10 @@ const GameController = (function() {
     };
   
     return {
-      startGame
+      startGame,
+      playRound
     };
 })();
 
 console.log(Gameboard.getBoardState());
+GameController.startGame();
