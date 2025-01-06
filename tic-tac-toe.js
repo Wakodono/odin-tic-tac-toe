@@ -42,7 +42,7 @@ const Gameboard = (function() {
 
 const GameController = (function() {
     let players = [];
-    const Gameboard = Gameboard
+    const gameBoard = Gameboard;
 
     function isSpotEmpty(spot) {
         return spot !== ' ';
@@ -104,16 +104,34 @@ const GameController = (function() {
         if (checkDiagonalForWin(topLeftToBottomRight || checkDiagonalForWin(topRightToBottomLeft))) return true;
 
         // Check for draw conditions
-        if (!board.includes(' ')) return 'Draw';
+        if (!board.includes(' ')) return 'draw';
 
         return false;
     };
 
     const playRound = function(index) {
-        let board = Gameboard.getBoardState();
         let whosTurn = players.find((element) => element.isTurn);
-
-        
+        let board = Gameboard.getBoardState();
+    
+        if (Gameboard.isSpotAvailable(index)) {
+            Gameboard.placeMarker(index, whosTurn.marker);
+    
+            let gameResult = checkForWinner();
+            if (gameResult === true) {
+                console.log(`${whosTurn.marker} has won the game!`);
+                return 'win'; // You can return a string or boolean to signify game end
+            } else if (gameResult === 'draw') {
+                console.log("We have reached an impass!");
+                return 'draw';
+            } else {
+                // No win or draw, switch turns
+                players.forEach(player => player.toggleTurn());
+                return 'continue';
+            }
+        } else {
+            console.log("That spot is already taken!");
+            return 'invalid';
+        }
     };
   
     return {
@@ -121,5 +139,4 @@ const GameController = (function() {
     };
 })();
 
-console.log(Gameboard.placeMarker(0, 'X'));
 console.log(Gameboard.getBoardState());
