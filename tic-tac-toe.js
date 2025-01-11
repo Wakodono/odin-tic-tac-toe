@@ -8,53 +8,39 @@ function createPlayer(isTurn, marker) {
     };
 }
 
-const Gameboard = (function() {
-    let board = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+const gameBoard = (() => {
+    let board = ['', '', '', '', '', '', '', '', ''];
 
-    function placeMarker(index, marker) {
-        // Check IF the index is valid (within the bounds of the board array)
-        if(index >=0 && index <= 8) {
-            // put isSpotAvailable here?
-            if (isSpotAvailable(index)) {
-                // Place marker in this spot
-                board[index] = marker;
-            }
-            return 1;
+    const getBoard = () => board;
+
+    const setCell = (index, symbol) => {
+        if (index >= 0 && index < board.length && isSpotAvailable(index)) {
+            board[index] = symbol;
+            return true;
         }
-        return 0
-    }
+        return false;
+    };
 
-    function clearBoard() {
-        board.fill(' ');  
-    }
+    const resetBoard = () => {
+        board = ['', '', '', '', '', '', '', '', ''];
+    };
 
-    function getBoardState() {
-        return board;
-    }
+    const isSpotAvailable = (index) => {
+        return board[index] === '';
+    };
 
-    function isSpotAvailable(index) {
-        return board[index] === ' ';
-    }
-
-    return {
-        // methods
-        getBoardState,
-        placeMarker,
-        isSpotAvailable,
-        clearBoard
-    }
+    return { getBoard, setCell, resetBoard, isSpotAvailable };
 })();
 
 const GameController = (function() {
     let players = [];
-    const gameBoard = Gameboard;
     
     function isSpotEmpty(spot) {
-        return spot === ' ';
+        return spot === '';
     }
     
     function checkRowForWin(rowStartIndex) {
-        const boardState = gameBoard.getBoardState();
+        const boardState = gameBoard.getBoard();
         const row = boardState.slice(rowStartIndex, rowStartIndex + 3);
         const firstSpot = row[0];
 
@@ -81,7 +67,7 @@ const GameController = (function() {
         createPlayer(false, 'O')
       ];
       // Additional game start logic here
-      gameBoard.clearBoard();
+      gameBoard.resetBoard();
 
       console.log('GAME STARTO')
 
@@ -91,7 +77,7 @@ const GameController = (function() {
     };
   
     const checkForWinner = function() {
-        let board = Gameboard.getBoardState();
+        let board = gameBoard.getBoard();
 
          // Check for wins in rows
          for (let rowIndex = 0; rowIndex < 3; rowIndex++) {
@@ -116,17 +102,17 @@ const GameController = (function() {
         if (checkDiagonalForWin(topLeftToBottomRight || checkDiagonalForWin(topRightToBottomLeft))) return true;
 
         // Check for draw conditions
-        if (!board.includes(' ')) return 'draw';
+        if (!board.includes('')) return 'draw';
 
         return false;
     };
 
     const playRound = function(index) {
         let whosTurn = players.find((element) => element.isTurn);
-        let board = Gameboard.getBoardState();
+        let board = gameBoard.getBoard();
     
-        if (Gameboard.isSpotAvailable(index)) {
-            Gameboard.placeMarker(index, whosTurn.marker);
+        if (gameBoard.isSpotAvailable(index)) {
+            gameBoard.setCell(index, whosTurn.marker);
     
             let gameResult = checkForWinner();
 
@@ -154,7 +140,7 @@ const GameController = (function() {
 })();
 
 GameController.startGame();
-console.log(Gameboard.getBoardState());
+console.log(gameBoard.getBoard());
 GameController.playRound(4);
 console.log(gameResult);
-console.log(Gameboard.getBoardState());
+console.log(gameBoard.getBoard());
