@@ -123,9 +123,14 @@ function DisplayController () {
     boardContent.forEach((spot, i) => {
         const boardSpot = document.createElement('button');
         boardSpot.classList.add('spot');
-        board.appendChild(boardSpot);
+        board.appendChild(boardSpot);``
+
+        boardSpot.setAttribute('aria-label', `position ${i}`);
+        boardSpot.textContent = Math.random() < 0.5 ? 'X' : 'O';
     })
 }
+
+console.log(DisplayController());
 
 // GameController.startGame();
 // console.log(gameBoard.getBoard());
