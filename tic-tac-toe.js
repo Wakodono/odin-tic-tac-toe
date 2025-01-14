@@ -111,20 +111,36 @@ const GameController = (function () {
     };
 })();
 
-GameController.startGame();
-console.log(gameBoard.getBoard());
+function DisplayController () {
+    const board = document.querySelector('.board');
 
-GameController.playRound(4)
-GameController.playRound(0);
-GameController.playRound(3);
-GameController.playRound(1);
-GameController.playRound(5);
+    function clearBoard() {
+        board.textContent = '';
+    }
+    
+    const boardContent = gameBoard.getBoard();
 
-const board = gameBoard.getBoard();
+    boardContent.forEach((spot, i) => {
+        const boardSpot = document.createElement('button');
+        boardSpot.classList.add('spot');
+        board.appendChild(boardSpot);
+    })
+}
 
-const displayBoard = board.reduce((display, cell, i) => {
-    cell = cell || ' ';  // Replace empty string with space
-    if (i % 3 === 2) return display + cell + '\n---------\n';
-    return display + cell + ' | ';
-}, '');
-console.log(displayBoard);
+// GameController.startGame();
+// console.log(gameBoard.getBoard());
+
+// GameController.playRound(4)
+// GameController.playRound(0);
+// GameController.playRound(3);
+// GameController.playRound(1);
+// GameController.playRound(5);
+
+// const board = gameBoard.getBoard();
+
+// const displayBoard = board.reduce((display, cell, i) => {
+//     cell = cell || ' ';  // Replace empty string with space
+//     if (i % 3 === 2) return display + cell + '\n---------\n';
+//     return display + cell + ' | ';`
+// }, '');
+// console.log(displayBoard);
