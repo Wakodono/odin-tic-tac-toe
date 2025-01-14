@@ -1,10 +1,10 @@
 function createPlayer(isTurn, marker) {
     return {
-      isTurn,
-      marker,
-      toggleTurn: function() {
-        this.isTurn = !this.isTurn;
-      }
+        isTurn,
+        marker,
+        toggleTurn: function () {
+            this.isTurn = !this.isTurn;
+        }
     };
 }
 
@@ -13,7 +13,7 @@ const gameBoard = (() => {
 
     const getBoard = () => board;
 
-    const setCell = (index, symbol) => {
+    const placeMarker = (index, symbol) => {
         if (index >= 0 && index < board.length && isSpotAvailable(index)) {
             board[index] = symbol;
             return true;
@@ -29,94 +29,66 @@ const gameBoard = (() => {
         return board[index] === '';
     };
 
-    return { getBoard, setCell, resetBoard, isSpotAvailable };
+    return { getBoard, placeMarker, resetBoard, isSpotAvailable };
 })();
 
-const GameController = (function() {
+const GameController = (function () {
     let players = [];
-    
+    let board = gameBoard.getBoard
+
     function isSpotEmpty(spot) {
         return spot === '';
     }
-    
-    function checkRowForWin(rowStartIndex) {
-        const boardState = gameBoard.getBoard();
-        const row = boardState.slice(rowStartIndex, rowStartIndex + 3);
-        const firstSpot = row[0];
 
-        return !isSpotEmpty(firstSpot) && row.every(spot => spot === firstSpot);
+    function checkForWin(board) {
+        const winningLines = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
+        return winningLines.some(line => {
+            const firstSpot = board[line[0]];
+            return !isSpotEmpty(firstSpot) &&
+                line.every(index => board[index] === firstSpot);
+        });
     }
 
-    function checkColumnForWin(columnStartIndex) {
-        // create a new array for each column the populate that array with the index 3 spaces away from it?
-        const column = [board[columnStartIndex], board[columnStartIndex + 3], board[columnStartIndex + 6]]
-        const firstSpot = column[0]
+    const startGame = function () {
+        players = [
+            createPlayer(true, 'X'),
+            createPlayer(false, 'O')
+        ];
+        // Additional game start logic here
+        gameBoard.resetBoard();
 
-        return !isSpotEmpty(firstSpot) && column.every(spot => spot === firstSpot);
-    }
+        console.log('GAME STARTO')
 
-    function checkDiagonalForWin(diagonal) {
-        const firstSpot = diagonal[0]
-
-        return !isSpotEmpty(firstSpot) && diagonal.every(spot => spot === firstSpot);
-    }
-  
-    const startGame = function() {
-      players = [
-        createPlayer(true, 'X'),
-        createPlayer(false, 'O')
-      ];
-      // Additional game start logic here
-      gameBoard.resetBoard();
-
-      console.log('GAME STARTO')
-
-      const firstPlayer = players.find(player => player.isTurn)
-      console.log(`${firstPlayer.marker} Will go first`)
+        const firstPlayer = players.find(player => player.isTurn)
+        console.log(`${firstPlayer.marker} Will go first`)
 
     };
-  
-    const checkForWinner = function() {
-        let board = gameBoard.getBoard();
 
-         // Check for wins in rows
-         for (let rowIndex = 0; rowIndex < 3; rowIndex++) {
-            if (checkRowForWin(rowIndex * 3)) {
-                return true;
-            }
-            
-        }
-
-        // Check for wins in columns
-        for (let columnIndex = 0; columnIndex < 3; columnIndex++) {
-            if (checkColumnForWin(columnIndex)) {
-                return true;
-            }
-        }
-
-        // Check for wins in diagonals
-
-        const topLeftToBottomRight = [board[0], board[4], board[8]];
-        const topRightToBottomLeft = [board[2], board[4], board[6]];
-
-        if (checkDiagonalForWin(topLeftToBottomRight || checkDiagonalForWin(topRightToBottomLeft))) return true;
-
-        // Check for draw conditions
-        if (!board.includes('')) return 'draw';
-
-        return false;
+    const checkForWinner = function () {
+        const board = gameBoard.getBoard();
+        return checkForWin(board) || (!board.includes('') && 'draw') || false;
     };
 
-    const playRound = function(index) {
+    const playRound = function (index) {
         let whosTurn = players.find((element) => element.isTurn);
-        let board = gameBoard.getBoard();
-    
-        if (gameBoard.isSpotAvailable(index)) {
-            gameBoard.setCell(index, whosTurn.marker);
-    
+        let board = gameBoard
+
+        if (board.isSpotAvailable(index)) {
+            board.placeMarker(index, whosTurn.marker);
+
             let gameResult = checkForWinner();
 
-            if (gameResult) {
+            if (gameResult === true) {
                 console.log(`${whosTurn.marker} has won the game!`);
                 return 'win'; // You can return a string or boolean to signify game end
             } else if (gameResult === 'draw') {
@@ -132,15 +104,27 @@ const GameController = (function() {
             return 'invalid';
         }
     };
-  
+
     return {
-      startGame,
-      playRound
+        startGame,
+        playRound
     };
 })();
 
 GameController.startGame();
 console.log(gameBoard.getBoard());
-GameController.playRound(4);
-console.log(gameResult);
-console.log(gameBoard.getBoard());
+
+GameController.playRound(4)
+GameController.playRound(0);
+GameController.playRound(3);
+GameController.playRound(1);
+GameController.playRound(5);
+
+const board = gameBoard.getBoard();
+
+const displayBoard = board.reduce((display, cell, i) => {
+    cell = cell || ' ';  // Replace empty string with space
+    if (i % 3 === 2) return display + cell + '\n---------\n';
+    return display + cell + ' | ';
+}, '');
+console.log(displayBoard);
