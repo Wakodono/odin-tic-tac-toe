@@ -34,7 +34,24 @@ const gameBoard = (() => {
 
 const GameController = (function () {
     let players = [];
-    let board = gameBoard.getBoard
+    let boardState = gameBoard.getBoard();
+
+    const startGame = function () {
+        players = [
+            createPlayer(true, 'X'),
+            createPlayer(false, 'O')
+        ];
+
+        gameBoard.resetBoard();
+
+        console.log('GAME STARTO');
+
+        const firstPlayer = players.find(player => player.isTurn);
+
+        console.log(`${firstPlayer.marker} Will go first`);
+    };
+
+    startGame();
 
     function isSpotEmpty(spot) {
         return spot === '';
@@ -59,29 +76,14 @@ const GameController = (function () {
         });
     }
 
-    const startGame = function () {
-        players = [
-            createPlayer(true, 'X'),
-            createPlayer(false, 'O')
-        ];
-        // Additional game start logic here
-        gameBoard.resetBoard();
-
-        console.log('GAME STARTO')
-
-        const firstPlayer = players.find(player => player.isTurn)
-        console.log(`${firstPlayer.marker} Will go first`)
-
-    };
-
     const checkForWinner = function () {
         const board = gameBoard.getBoard();
         return checkForWin(board) || (!board.includes('') && 'draw') || false;
     };
 
     const playRound = function (index) {
-        let whosTurn = players.find((element) => element.isTurn);
-        let board = gameBoard
+        const whosTurn = players.find((element) => element.isTurn);
+        const board = gameBoard
 
         if (board.isSpotAvailable(index)) {
             board.placeMarker(index, whosTurn.marker);
@@ -111,22 +113,25 @@ const GameController = (function () {
     };
 })();
 
-function DisplayController () {
-    const board = document.querySelector('.board');
+function DisplayController() {
+    const boardDiv = document.querySelector('.board');
 
     function clearBoard() {
-        board.textContent = '';
+        boardDiv.textContent = '';
     }
-    
+
     const boardContent = gameBoard.getBoard();
 
     boardContent.forEach((spot, i) => {
         const boardSpot = document.createElement('button');
         boardSpot.classList.add('spot');
-        board.appendChild(boardSpot);``
+        boardDiv.appendChild(boardSpot);
+
+        boardSpot.addEventListener('click', function () {
+            GameController.playRound(i)
+        })
 
         boardSpot.setAttribute('aria-label', `position ${i}`);
-        boardSpot.textContent = Math.random() < 0.5 ? 'X' : 'O';
     })
 }
 
