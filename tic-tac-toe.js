@@ -113,31 +113,42 @@ const GameController = (function () {
     };
 })();
 
-function DisplayController() {
+const DisplayController = (function () {
     const boardDiv = document.querySelector('.board');
-
+    const buttons = [];
+    
     function clearBoard() {
         boardDiv.textContent = '';
     }
+    
+    function updateDisplay() {
+        const currentBoardState = gameBoard.getBoard();
+        currentBoardState.forEach((marker, index) => {
+            buttons[index].textContent = marker;
+        });
+    }
 
-    const boardContent = gameBoard.getBoard();
-
-    boardContent.forEach((spot, i) => {
+    gameBoard.getBoard().forEach((_, i) => {
         const boardSpot = document.createElement('button');
-        boardSpot.classList.add('spot');
+        boardSpot.classList.add('spot');``
         boardDiv.appendChild(boardSpot);
+        buttons.push(boardSpot);
 
         boardSpot.addEventListener('click', function () {
-            GameController.playRound(i)
+            const result = GameController.playRound(i);
+            if(result === 'win' || result === 'draw') {
+                buttons.forEach(button => {
+                    button.disabled = true;
+                })
+            }
+            updateDisplay()
         })
 
         boardSpot.setAttribute('aria-label', `position ${i}`);
     })
-}
 
-console.log(DisplayController());
+})();
 
-// GameController.startGame();
 // console.log(gameBoard.getBoard());
 
 // GameController.playRound(4)
