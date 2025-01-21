@@ -114,7 +114,6 @@ const GameController = (function () {
 
 const DisplayController = (function () {
     const boardDiv = document.querySelector('.board');
-    const starButton = document.querySelector('.start-game');
     const buttons = [];
     
     function clearBoard() {
@@ -131,10 +130,10 @@ const DisplayController = (function () {
     function generateNewBoard() {
         gameBoard.getBoard().forEach((_, i) => {
             const boardSpot = document.createElement('button');
-            boardSpot.classList.add('spot');``
+            boardSpot.classList.add('spot');
             boardDiv.appendChild(boardSpot);
             buttons.push(boardSpot);
-    
+            
             boardSpot.addEventListener('click', function () {
                 const result = GameController.playRound(i);
                 if(result === 'win' || result === 'draw') {
@@ -149,13 +148,25 @@ const DisplayController = (function () {
         })
     }
     
+    // Generate start button when player names have been entered
+    function generateStartButton() {
+        // create element
+        const starButton = document.createElement('button');
+
+        // add to classlist
+        starButton.classList.add('start-game');
+        
+        // append element to parent
+        boardDiv.appendChild(starButton);
+
+        starButton.addEventListener('click', function() {
+            clearBoard();
+            this.textContent = 'Restart'
+            GameController.startGame();
+            generateNewBoard();
+        })
+    }
     
-    starButton.addEventListener('click', function() {
-        clearBoard();
-        this.textContent = 'Restart'
-        GameController.startGame();
-        generateNewBoard();
-    })
 
 })();
 
