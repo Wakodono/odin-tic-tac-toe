@@ -44,14 +44,13 @@ const GameController = (function () {
 
         gameBoard.resetBoard();
 
-        console.log('GAME STARTO');
+        ('GAME STARTO');
 
         const firstPlayer = players.find(player => player.isTurn);
 
-        console.log(`${firstPlayer.marker} Will go first`);
+        (`${firstPlayer.marker} Will go first`);
     };
 
-    startGame();
 
     function isSpotEmpty(spot) {
         return spot === '';
@@ -91,10 +90,10 @@ const GameController = (function () {
             let gameResult = checkForWinner();
 
             if (gameResult === true) {
-                console.log(`${whosTurn.marker} has won the game!`);
+                (`${whosTurn.marker} has won the game!`);
                 return 'win'; // You can return a string or boolean to signify game end
             } else if (gameResult === 'draw') {
-                console.log("We have reached an impass!");
+                ("We have reached an impass!");
                 return 'draw';
             } else {
                 // No win or draw, switch turns
@@ -102,7 +101,7 @@ const GameController = (function () {
                 return 'continue';
             }
         } else {
-            console.log("That spot is already taken!");
+            ("That spot is already taken!");
             return 'invalid';
         }
     };
@@ -145,16 +144,22 @@ const DisplayController = (function () {
                 }
                 updateDisplay()
             })
-    
+            
             boardSpot.setAttribute('aria-label', `position ${i}`);
         })
     }
     
-    starButton.addEventListener('click', generateNewBoard)
+    
+    starButton.addEventListener('click', function() {
+        clearBoard();
+        this.textContent = 'Restart'
+        GameController.startGame();
+        generateNewBoard();
+    })
 
 })();
 
-// console.log(gameBoard.getBoard());
+// (gameBoard.getBoard());
 
 // GameController.playRound(4)
 // GameController.playRound(0);
@@ -169,4 +174,4 @@ const DisplayController = (function () {
 //     if (i % 3 === 2) return display + cell + '\n---------\n';
 //     return display + cell + ' | ';`
 // }, '');
-// console.log(displayBoard);
+// (displayBoard);
