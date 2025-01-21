@@ -115,6 +115,7 @@ const GameController = (function () {
 
 const DisplayController = (function () {
     const boardDiv = document.querySelector('.board');
+    const starButton = document.querySelector('.start-game');
     const buttons = [];
     
     function clearBoard() {
@@ -128,24 +129,28 @@ const DisplayController = (function () {
         });
     }
 
-    gameBoard.getBoard().forEach((_, i) => {
-        const boardSpot = document.createElement('button');
-        boardSpot.classList.add('spot');``
-        boardDiv.appendChild(boardSpot);
-        buttons.push(boardSpot);
-
-        boardSpot.addEventListener('click', function () {
-            const result = GameController.playRound(i);
-            if(result === 'win' || result === 'draw') {
-                buttons.forEach(button => {
-                    button.disabled = true;
-                })
-            }
-            updateDisplay()
+    function generateNewBoard() {
+        gameBoard.getBoard().forEach((_, i) => {
+            const boardSpot = document.createElement('button');
+            boardSpot.classList.add('spot');``
+            boardDiv.appendChild(boardSpot);
+            buttons.push(boardSpot);
+    
+            boardSpot.addEventListener('click', function () {
+                const result = GameController.playRound(i);
+                if(result === 'win' || result === 'draw') {
+                    buttons.forEach(button => {
+                        button.disabled = true;
+                    })
+                }
+                updateDisplay()
+            })
+    
+            boardSpot.setAttribute('aria-label', `position ${i}`);
         })
-
-        boardSpot.setAttribute('aria-label', `position ${i}`);
-    })
+    }
+    
+    starButton.addEventListener('click', generateNewBoard)
 
 })();
 
