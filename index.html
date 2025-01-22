@@ -8,7 +8,22 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Tic Tac Toe</h1>
-    <div class="board"></div>
+    <h1 class="title">Tic Tac Toe</h1>
+    <main>
+        <div class="enter-names">
+            <form action="">
+                <div class="input-group">
+                    <label for="player1">Player 1</label>
+                    <input type="text" name="player1" id="player1" placeholder="Enter name...">
+                </div class="input-group">
+                <div class="input-group">
+                    <label for="player1">Player 2</label>
+                    <input type="text" name="player2" id="player2" placeholder="Enter name...">
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        <div class="board"></div>
+    </main>
 </body>
 </html>
