@@ -73,6 +73,10 @@ h6 {
   isolation: isolate;
 }
 
+div {
+    margin: 1rem 0 1rem;
+}
+
 .title {
     margin-bottom: 2rem;
 }
@@ -86,7 +90,7 @@ h6 {
 }
 
 .start-game {
-  margin-bottom: 1rem;
+    margin: 1rem 0 1rem;
 }
 
 .enter-names button {
@@ -95,4 +99,16 @@ h6 {
 
 .input-group {
   margin-bottom: 1rem;
+}
+
+.player1-wins,
+.player2-wins {
+    border: 1px solid black;
+    padding: 0.813rem;
+    border-radius: 6px;
+}
+
+.scoreboard h2 {
+    text-align: center;
+    margin-bottom: 1rem;
 }

@@ -1,7 +1,9 @@
-function createPlayer(isTurn, marker) {
+function createPlayer(isTurn, marker, playerName) {
     return {
         isTurn,
         marker,
+        playerName,
+        wins: 0,
         toggleTurn: function () {
             this.isTurn = !this.isTurn;
         }
@@ -36,10 +38,10 @@ const GameController = (function () {
     let players = [];
     let boardState = gameBoard.getBoard();
 
-    const startGame = function () {
+    const startGame = function (player1Name, player2Name) {
         players = [
-            createPlayer(true, 'X'),
-            createPlayer(false, 'O')
+            createPlayer(true, 'X', player1Name),
+            createPlayer(false, 'O', player2Name)
         ];
 
         gameBoard.resetBoard();
@@ -90,10 +92,11 @@ const GameController = (function () {
             let gameResult = checkForWinner();
 
             if (gameResult === true) {
-                (`${whosTurn.marker} has won the game!`);
+                whosTurn.wins += 1;
+                console.log(`${whosTurn.playerName} has won the game!`);
                 return 'win'; // You can return a string or boolean to signify game end
             } else if (gameResult === 'draw') {
-                ("We have reached an impass!");
+                console.log("We have reached an impass!");
                 return 'draw';
             } else {
                 // No win or draw, switch turns
@@ -101,7 +104,7 @@ const GameController = (function () {
                 return 'continue';
             }
         } else {
-            ("That spot is already taken!");
+            console.log("That spot is already taken!");
             return 'invalid';
         }
     };
@@ -113,13 +116,33 @@ const GameController = (function () {
 })();
 
 const DisplayController = (function () {
+    const mainContainer = document.querySelector('main');
     const boardDiv = document.querySelector('.board');
+    const form = document.querySelector('form');
     const buttons = [];
-    
+
+    let player1Name;
+    let player2Name;
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        player1Name = this.player1.value;
+        player2Name = this.player2.value;
+
+        if (player1Name && player2Name) {
+            form.style.display = 'none';
+
+            generateStartButton();
+        }
+    })
+
+
     function clearBoard() {
-        boardDiv.textContent = '';
+        boardDiv.innerHTML = '';
+        buttons.length = 0;
+        gameBoard.resetBoard();
     }
-    
+
     function updateDisplay() {
         const currentBoardState = gameBoard.getBoard();
         currentBoardState.forEach((marker, index) => {
@@ -128,26 +151,28 @@ const DisplayController = (function () {
     }
 
     function generateNewBoard() {
-        gameBoard.getBoard().forEach((_, i) => {
-            const boardSpot = document.createElement('button');
-            boardSpot.classList.add('spot');
-            boardDiv.appendChild(boardSpot);
-            buttons.push(boardSpot);
-            
-            boardSpot.addEventListener('click', function () {
-                const result = GameController.playRound(i);
-                if(result === 'win' || result === 'draw') {
-                    buttons.forEach(button => {
-                        button.disabled = true;
-                    })
-                }
-                updateDisplay()
+        if (buttons.length === 0) {
+            gameBoard.getBoard().forEach((_, i) => {
+                const boardSpot = document.createElement('button');
+                boardSpot.classList.add('spot');
+                boardDiv.appendChild(boardSpot);
+                buttons.push(boardSpot);
+
+                boardSpot.addEventListener('click', function () {
+                    const result = GameController.playRound(i);
+                    if (result === 'win' || result === 'draw') {
+                        buttons.forEach(button => {
+                            button.disabled = true;
+                        })
+                    }
+                    updateDisplay()
+                })
+
+                boardSpot.setAttribute('aria-label', `position ${i}`);
             })
-            
-            boardSpot.setAttribute('aria-label', `position ${i}`);
-        })
+        }
     }
-    
+
     // Generate start button when player names have been entered
     function generateStartButton() {
         // create element
@@ -155,34 +180,25 @@ const DisplayController = (function () {
 
         // add to classlist
         starButton.classList.add('start-game');
-        
-        // append element to parent
-        boardDiv.appendChild(starButton);
 
-        starButton.addEventListener('click', function() {
-            clearBoard();
-            this.textContent = 'Restart'
-            GameController.startGame();
-            generateNewBoard();
-        })
+        starButton.textContent = 'Start';
+
+        // append element to parent
+        mainContainer.appendChild(starButton);
+
+        starButton.addEventListener('click', function () {
+            if (this.textContent === 'Start') {
+                // First game start
+                this.textContent = 'Restart';
+                GameController.startGame(player1Name, player2Name);
+                generateNewBoard();
+            } else {
+                // Restart game
+                clearBoard();
+                GameController.startGame(player1Name, player2Name);
+                generateNewBoard();
+            }
+        });
     }
-    
 
 })();
-
-// (gameBoard.getBoard());
-
-// GameController.playRound(4)
-// GameController.playRound(0);
-// GameController.playRound(3);
-// GameController.playRound(1);
-// GameController.playRound(5);
-
-// const board = gameBoard.getBoard();
-
-// const displayBoard = board.reduce((display, cell, i) => {
-//     cell = cell || ' ';  // Replace empty string with space
-//     if (i % 3 === 2) return display + cell + '\n---------\n';
-//     return display + cell + ' | ';`
-// }, '');
-// (displayBoard);
