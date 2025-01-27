@@ -1,9 +1,9 @@
-function createPlayer(isTurn, marker, playerName) {
+function createPlayer(isTurn, marker, playerName, isWinner) {
     return {
         isTurn,
         marker,
         playerName,
-        wins: 0,
+        isWinner,
         toggleTurn: function () {
             this.isTurn = !this.isTurn;
         }
@@ -40,8 +40,8 @@ const GameController = (function () {
 
     const startGame = function (player1Name, player2Name) {
         players = [
-            createPlayer(true, 'X', player1Name),
-            createPlayer(false, 'O', player2Name)
+            createPlayer(true, 'X', player1Name, false),
+            createPlayer(false, 'O', player2Name, false)
         ];
 
         gameBoard.resetBoard();
@@ -85,6 +85,7 @@ const GameController = (function () {
     const playRound = function (index) {
         const whosTurn = players.find((element) => element.isTurn);
         const board = gameBoard
+        let endOfGameMessage;
 
         if (board.isSpotAvailable(index)) {
             board.placeMarker(index, whosTurn.marker);
@@ -92,12 +93,14 @@ const GameController = (function () {
             let gameResult = checkForWinner();
 
             if (gameResult === true) {
-                whosTurn.wins += 1;
                 console.log(`${whosTurn.playerName} has won the game!`);
-                return 'win'; // You can return a string or boolean to signify game end
+                endOfGameMessage = `${whosTurn.playerName} has won the game!`;
+
+                return endOfGameMessage; // You can return a string or boolean to signify game end
             } else if (gameResult === 'draw') {
                 console.log("We have reached an impass!");
-                return 'draw';
+                endOfGameMessage = "We have reached an impass!";
+                return endOfGameMessage;
             } else {
                 // No win or draw, switch turns
                 players.forEach(player => player.toggleTurn());
@@ -119,6 +122,7 @@ const DisplayController = (function () {
     const mainContainer = document.querySelector('main');
     const boardDiv = document.querySelector('.board');
     const form = document.querySelector('form');
+    const displayWinner = document.querySelector('.displayWinner');
     const buttons = [];
 
     let player1Name;
@@ -164,6 +168,8 @@ const DisplayController = (function () {
                         buttons.forEach(button => {
                             button.disabled = true;
                         })
+
+                        displayWinner.textContent = `${whosTurn.playerName} has won the game!`
                     }
                     updateDisplay()
                 })
@@ -175,6 +181,9 @@ const DisplayController = (function () {
 
     // Generate start button when player names have been entered
     function generateStartButton() {
+        // Grab scoreboard from the DOM
+        const scoreboard = document.querySelector('.scoreboard')
+
         // create element
         const starButton = document.createElement('button');
 
@@ -189,6 +198,7 @@ const DisplayController = (function () {
         starButton.addEventListener('click', function () {
             if (this.textContent === 'Start') {
                 // First game start
+                scoreboard.classList.remove("hidden");
                 this.textContent = 'Restart';
                 GameController.startGame(player1Name, player2Name);
                 generateNewBoard();
@@ -198,6 +208,7 @@ const DisplayController = (function () {
                 GameController.startGame(player1Name, player2Name);
                 generateNewBoard();
             }
+            
         });
     }
 
