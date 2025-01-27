@@ -209,6 +209,7 @@ const DisplayController = (function () {
             } else {
                 // Restart game
                 clearBoard();
+                displayWinner.textContent = '';
                 GameController.startGame(player1Name, player2Name);
                 generateNewBoard();
             }
