@@ -164,14 +164,18 @@ const DisplayController = (function () {
 
                 boardSpot.addEventListener('click', function () {
                     const result = GameController.playRound(i);
-                    if (result === 'win' || result === 'draw') {
+
+                    // handle win or draw conditions
+                    if (result !== 'continue' && result !== 'invalid') {
                         buttons.forEach(button => {
                             button.disabled = true;
                         })
-
-                        displayWinner.textContent = `${whosTurn.playerName} has won the game!`
+                        
+                        displayWinner.textContent = result;
                     }
+
                     updateDisplay()
+                    
                 })
 
                 boardSpot.setAttribute('aria-label', `position ${i}`);
