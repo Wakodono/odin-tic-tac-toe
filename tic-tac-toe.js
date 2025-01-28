@@ -46,11 +46,11 @@ const GameController = (function () {
 
         gameBoard.resetBoard();
 
-        ('GAME STARTO');
+        console.log('GAME STARTO');
 
         const firstPlayer = players.find(player => player.isTurn);
 
-        (`${firstPlayer.marker} Will go first`);
+        console.log(`${firstPlayer.marker} Will go first`);
     };
 
 
@@ -77,7 +77,7 @@ const GameController = (function () {
         });
     }
 
-    const checkForWinner = function () {
+    const isGameOver = function () {
         const board = gameBoard.getBoard();
         return checkForWin(board) || (!board.includes('') && 'draw') || false;
     };
@@ -90,7 +90,7 @@ const GameController = (function () {
         if (board.isSpotAvailable(index)) {
             board.placeMarker(index, whosTurn.marker);
 
-            let gameResult = checkForWinner();
+            let gameResult = isGameOver();
 
             if (gameResult === true) {
                 console.log(`${whosTurn.playerName} has won the game!`);
@@ -173,7 +173,6 @@ const DisplayController = (function () {
                         
                         displayWinner.textContent = result;
                     }
-
                     updateDisplay()
                     
                 })
